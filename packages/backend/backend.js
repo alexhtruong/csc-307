@@ -47,6 +47,18 @@ const addUser = (user) => {
     return user;
 };
 
+const deleteUser = (id) => {
+    users["users_list"] = users["users_list"].filter(
+        (user) => user["id"] != id
+    );
+};
+
+const findUserByNameAndJob = (name, job) => {
+    users["users_list"].filter(
+        (user) => user["name"] === name && user["job"] == job
+    );
+};
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -78,6 +90,11 @@ app.post("/users", (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
     res.send();
+});
+
+app.delete("/users/:id", (req, res) => {
+    const id = req.params.id;
+    deleteUser(id);
 });
 
 app.listen(port, () => {
