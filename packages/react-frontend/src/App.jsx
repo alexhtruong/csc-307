@@ -5,8 +5,17 @@ import Form from "./Form";
 
 function MyApp() {
   const [characters, setCharacters] = useState([]);
-  function updateList(person) {
-    setCharacters([...characters, person]);
+  async function updateList(person) {
+    try {
+      const response = await postUser(person);
+      if (response.ok) {
+        setCharacters([...characters, person]);
+      } else {
+        console.error("Failed to add new user");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function removeOneCharacter(index) {
@@ -21,6 +30,22 @@ function MyApp() {
       const response = await fetch("http://localhost:8000/users");
       const data = await response.json();
       setCharacters(data["users_list"]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function postUser(person) {
+    try {
+      const response = await fetch("http://localhost:8000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(person)
+      });
+      
+      return response;
     } catch (error) {
       console.error(error);
     }
