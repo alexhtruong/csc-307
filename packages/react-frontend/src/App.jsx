@@ -8,8 +8,9 @@ function MyApp() {
   async function updateList(person) {
     try {
       const response = await postUser(person);
-      if (response.ok) {
-        setCharacters([...characters, person]);
+      if (response.status === 201) {
+        const newPerson = await response.json();
+        setCharacters([...characters, newPerson]);
       } else {
         console.error("Failed to add new user");
       }
@@ -18,11 +19,20 @@ function MyApp() {
     }
   }
 
-  function removeOneCharacter(index) {
+  async function removeOneCharacter(index) {
+    const userID = characters[index].id;
     const updated = characters.filter((character, i) => {
       return i !== index;
     });
-    setCharacters(updated);
+
+    try {
+      const response = await fetch(`http://localhost:8000/users/${userID}`, {
+        method: "DELETE",
+      });
+      if (response.status === 204) setCharacters(updated);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function fetchUsers() {
@@ -44,7 +54,7 @@ function MyApp() {
         },
         body: JSON.stringify(person)
       });
-      
+
       return response;
     } catch (error) {
       console.error(error);

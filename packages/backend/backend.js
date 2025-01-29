@@ -49,9 +49,16 @@ const addUser = (user) => {
 };
 
 const deleteUser = (id) => {
-    users["users_list"] = users["users_list"].filter(
-        (user) => user["id"] != id
-    );
+  let userToDelete = null;
+  users["users_list"] = users["users_list"].filter((user) => {
+      if (user["id"] === id) {
+          userToDelete = user;
+          return false; 
+      }
+      return true; 
+  });
+  
+  return userToDelete;
 };
 
 const findUserByNameAndJob = (name, job) => {
@@ -59,6 +66,11 @@ const findUserByNameAndJob = (name, job) => {
         (user) => user["name"] === name && user["job"] == job
     );
 };
+
+const generateRandomUserID = () => {
+  return Math.random();
+};
+
 app.use(cors());
 app.use(express.json());
 
@@ -89,13 +101,19 @@ app.get("/users/:id", (req, res) => {
 
 app.post("/users", (req, res) => {
     const userToAdd = req.body;
+    userToAdd.id = generateRandomUserID();
     addUser(userToAdd);
-    res.send();
+    res.status(201).send(userToAdd);
 });
 
 app.delete("/users/:id", (req, res) => {
     const id = req.params.id;
-    deleteUser(id);
+    const user = deleteUser(id);
+    if (user) {
+      res.status(204).send();
+    } else {
+      res.status(404).send("User not found");
+    }
 });
 
 app.listen(port, () => {
