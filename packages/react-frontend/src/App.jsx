@@ -20,7 +20,7 @@ function MyApp() {
   }
 
   async function removeOneCharacter(index) {
-    const userID = characters[index].id;
+    const userID = characters[index]._id;
     const updated = characters.filter((character, i) => {
       return i !== index;
     });
