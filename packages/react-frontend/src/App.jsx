@@ -20,13 +20,13 @@ function MyApp() {
   }
 
   async function removeOneCharacter(index) {
-    const userID = characters[index]._id;
+    const id = characters[index]._id;
     const updated = characters.filter((character, i) => {
       return i !== index;
     });
 
     try {
-      const response = await fetch(`http://localhost:8000/users/${userID}`, {
+      const response = await fetch(`http://localhost:8000/users/${id}`, {
         method: "DELETE",
       });
       if (response.status === 204) setCharacters(updated);
